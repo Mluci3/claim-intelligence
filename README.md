@@ -12,7 +12,7 @@
 
 ## 📋 Sobre o Projeto
 
-**Claim Intelligence** é uma plataforma que automatiza o processo de análise de sinistros automotivos usando agentes inteligentes do Azure AI Foundry. O sistema processa fotos do veículo danificado, documentos do segurado (CNH) e Boletim de Ocorrência, gerando parecer automatizado com classificação de gravidade, estimativa de custo e recomendação de aprovação.
+**Claim Intelligence** é uma plataforma que automatiza o processo de análise de sinistros automotivos usando agentes inteligentes do Azure AI Foundry. O sistema processa fotos do veículo danificado, documentos do segurado (CNH) e Boletim de Ocorrência, gerando parecer automatizado com classificação de gravidade, estimativa de custo e recomendação de aprovação ou negativa.
 
 ### Motivação
 

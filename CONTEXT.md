@@ -111,6 +111,11 @@ python-dotenv         → configuração via .env
 - Pesquisa de viabilidade de dados (datasets identificados)
 - Decisões arquiteturais iniciais (6 ADRs)
 - Estrutura de documentação criada
+-  6 ADRs documentados
+- README, ARCHITECTURE, CHANGELOG, DATASETS criados
+- .gitignore e .env.example criados
+- Repositório GitHub criado (Mluci3/claim-intelligence)
+- gh CLI instalado e autenticado
 
 ### 🔄 Em andamento
 
@@ -126,6 +131,10 @@ python-dotenv         → configuração via .env
 6. Download dos datasets
 7. Estrutura inicial do código Python
 8. Primeiro agent funcional (single-agent)
+9. Recuperar senha Kaggle
+10. Criar Resource Group rg-claim-intelligence no Azure
+11. Provisionar Foundry Hub + Project
+12. Estrutura inicial do código Python
 
 ---
 
