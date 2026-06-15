@@ -1,0 +1,115 @@
+# ============================================================================
+# CLAIM INTELLIGENCE — .gitignore
+# ============================================================================
+
+# Secrets & Environment
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+credentials.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+.virtualenv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Type Checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# Linters
+.ruff_cache/
+.pylint.d/
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Datasets (não versionar arquivos grandes)
+data/car_damage_severity/
+data/idnet_sample/
+data/raw/
+data/processed/
+data/*.zip
+data/*.tar.gz
+
+# MAS versiona dados sintéticos de exemplo (small samples)
+!data/synthetic_samples/
+!data/templates/
+!data/README.md
+
+# Modelos treinados (não versionar arquivos grandes)
+models/
+*.pkl
+*.joblib
+*.h5
+*.onnx
+
+# Azure
+.azure/
+azure.json
+
+# Documentação gerada
+docs/_build/
+site/
+
+# Output / Temporary
+output/
+tmp/
+temp/
+*.tmp
+
+# Kaggle
+kaggle.json
+
+# Foundry / Azure AI artifacts
+.foundry/
+agents.json
+runs.json
