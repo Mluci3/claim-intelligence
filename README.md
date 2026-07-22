@@ -193,7 +193,7 @@ az group create --name rg-claim-intelligence --location eastus2
 | Fase | Status |
 |------|--------|
 | 📋 Planejamento | ✅ Concluído |
-| 🏗️ Setup Azure Foundry | ⏳ Em breve |
+| 🏗️ Setup Azure Foundry | 🔄 Em andamento — infra provisionada (Hub, Project, Vision, Doc Intel, Search, Storage); hardening de segurança (Managed Identity em todos os recursos) e conexão do Storage ao Project ainda pendentes |
 | 🤖 Agent Implementation | ⏳ Em breve |
 | 🧪 Evaluations | ⏳ Em breve |
 | 📊 Observability | ⏳ Em breve |
