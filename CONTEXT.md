@@ -14,7 +14,7 @@
 - **Certificação alvo:** AI-103 (Azure AI App and Agent Developer Associate)
 - **Data prevista da prova:** 15-31/07/2026
 - **Início do projeto:** 08/06/2026
-- **Última atualização:** 08/06/2026
+- **Última atualização:** 20/07/2026
 
 ---
 
@@ -26,7 +26,7 @@ Construir uma plataforma multi-agent enterprise-grade que automatiza análise de
 
 ## 👤 Perfil da Desenvolvedora
 
-- **Nome:** Maria Lucia
+- **Nome:** Maria Lucilene
 - **Cargo:** AI Engineer @ Minsait (GOLLabs squad)
 - **Stack atual:** Python, LangChain, Azure AI, Copilot Studio, Power Automate
 - **Projetos relevantes:** Datathon Fase 05 (MLOps), paligeri (RAG clínico), IARAA (RAG agroecologia), FlightOps (Copilot Studio em produção)
@@ -53,16 +53,20 @@ Construir uma plataforma multi-agent enterprise-grade que automatiza análise de
 ### Azure Resources (a provisionar)
 
 ```
-rg-claim-intelligence (East US 2)
-├── Foundry Hub: hub-claim-intelligence
-│   └── Foundry Project: claim-analyzer
+rg-claim-intelligence
+├── Foundry Hub: hub-claim-intelligence (East US 2)
+│   └── Foundry Project: claim-analyzer (East US 2)
 │       ├── Agent: claim-processor
-│       └── Connections: Vision, Doc Intel, Search, Storage
-├── Azure AI Vision: vision-claim-intelligence
-├── Document Intelligence: docintel-claim-intelligence
-├── Azure AI Search: search-claim-intelligence
-└── Azure Blob Storage: stclaimintelligence
+│       └── Connections: Vision ✅, Doc Intel ✅, Search ✅, Storage ⏳
+├── Azure AI Vision: vision-claim-intelligence (East US 2)
+├── Document Intelligence: docintel-claim-intelligence (East US 2)
+├── Azure AI Search: search-claim-intelligence (East US — ver nota de região abaixo)
+└── Azure Blob Storage: stclaimintelligence (East US 2 — Entra ID only, rede restrita)
 ```
+
+> **Nota de segurança — Storage:** provisionado com `allowSharedKeyAccess=false` (sem key estática, só Microsoft Entra ID/RBAC) e `networkRuleSet.defaultAction=Deny` com IP da Maria liberado + `bypass=AzureServices`. Padrão mais rígido que os outros 3 recursos (que ainda usam "Chave da API"); decisão de progressivamente aplicar least-privilege conforme a certificação cobra.
+
+> **Nota de região — Azure AI Search:** provisionado em **East US**, não East US 2 como o resto do stack. Motivo: tentativa de criação em East US 2 falhou com `InsufficientResourcesAvailable` (capacidade do tier Free esgotada na região no momento). Decisão consciente: manter Free (custo R$ 0) em vez de pagar S1 (~US$ 250/mês fixo) só para manter consistência de região — não se justifica para o volume de uso do projeto (poucos documentos, baixo volume de queries). Latência extra entre East US e East US 2 é desprezível para esse caso de uso.
 
 ### SDKs Python
 
@@ -81,8 +85,8 @@ python-dotenv         → configuração via .env
 ### Datasets
 
 ```
-✅ Car Damage Severity (Kaggle, ~1.500 imagens)
-✅ IDNet (Kaggle, CNHs sintéticas)
+✅ Car Damage Severity (Kaggle, 1.631 imagens) — baixado e extraído em data/car_damage_severity/
+❌ IDNet (Kaggle, CNHs sintéticas) — download corrompido (zip de 20GB sem rodapé válido, precisa refazer)
 🛠️ BOs sintéticos (gerar com templates públicos)
 🛠️ Apólices fictícias (criar 10-15 em MD/PDF)
 ```
@@ -107,42 +111,37 @@ python-dotenv         → configuração via .env
 
 ### ✅ Concluído
 
-- Planejamento estratégico do projeto
-- Pesquisa de viabilidade de dados (datasets identificados)
-- Decisões arquiteturais iniciais (6 ADRs)
-- Estrutura de documentação criada
--  6 ADRs documentados
-- README, ARCHITECTURE, CHANGELOG, DATASETS criados
-- .gitignore e .env.example criados
-- Repositório GitHub criado (Mluci3/claim-intelligence)
-- gh CLI instalado e autenticado
+- Planejamento estratégico do projeto e documentação arquitetural (6 ADRs, README, ARCHITECTURE, CHANGELOG, DATASETS)
+- Configuração do Git local no Mac (branch `main` como padrão) e primeiro push para o GitHub (Mluci3/claim-intelligence)
+- Criação manual via Azure Portal do Resource Group `rg-claim-intelligence`
+- Provisionamento do Foundry Hub `hub-claim-intelligence`
+- Provisionamento do Foundry Project `claim-analyzer`
+- Setup do ambiente de desenvolvimento local Python (`.env`, `requirements.txt` com `azure-ai-projects`, `azure-identity`, `python-dotenv`)
+- `.env.example` corrigido para o padrão do SDK 2.x (`PROJECT_ENDPOINT` em vez de connection string)
+- Azure CLI instalado + `az login` configurado (autenticação local via `DefaultAzureCredential`)
+- Script `test_azure_connection.py` criado e validado — autentica e lista connections do Project
+- Recurso **Azure AI services** `vision-claim-intelligence` (East US 2) provisionado e conectado ao Foundry Project (`claim-analyzer`) via connection tipo "Chave da API"
+- Recurso **Document Intelligence** `docintel-claim-intelligence` (East US 2, kind `FormRecognizer`) provisionado e conectado ao Foundry Project via "Chave da API"
+- Recurso **Azure AI Search** `search-claim-intelligence` provisionado (Free tier, região **East US** — ver nota de região acima) e conectado ao Foundry Project
+- Recurso **Azure Blob Storage** `stclaimintelligence` (East US 2, Standard LRS) provisionado com hardening: Entra ID only (sem key), rede restrita ao IP da Maria + trusted Azure services
+- Criado `docs/AI-103-STUDY-GUIDE.md` — manual de estudos hands-on, atualizado a cada sessão
 
 ### 🔄 Em andamento
 
-- (nada ainda — projeto na fase de planejamento)
+- Conectar o Storage ao Foundry Project (provavelmente via Entra ID, não "Chave da API" — key access está desabilitada)
 
 ### ⏭️ Próximos passos (ordem)
 
-1. **Maria recupera senha Kaggle** ⏳ (bloqueio)
-2. Setup do ambiente local (estrutura de pastas)
-3. Criar Resource Group `rg-claim-intelligence`
-4. Provisionar Foundry Hub + Project
-5. Provisionar AI Vision + Document Intelligence + Storage
-6. Download dos datasets
-7. Estrutura inicial do código Python
-8. Primeiro agent funcional (single-agent)
-9. Recuperar senha Kaggle
-10. Criar Resource Group rg-claim-intelligence no Azure
-11. Provisionar Foundry Hub + Project
-12. Estrutura inicial do código Python
+1. Conectar `stclaimintelligence` ao Foundry Project via Microsoft Entra ID
+2. Refazer o download do IDNet (zip anterior de 20GB corrompido — ver nota abaixo)
+3. Criar o agente `claim-processor` 100% via código Python (SDK)
+4. Implementar a primeira tool (single-agent) — provavelmente Vision, já que a connection está pronta e o dataset Car Damage Severity já está pronto
 
 ---
 
 ## 🚧 Bloqueios Ativos
 
-| Bloqueio | Responsável | Desde |
-|----------|-------------|-------|
-| Recuperação de senha Kaggle (necessário para baixar datasets) | Maria | 08/06/2026 |
+Nenhum bloqueio ativo no momento (senha do Kaggle recuperada em 21/07/2026).
 
 ---
 
@@ -155,6 +154,10 @@ python-dotenv         → configuração via .env
 - Decisão por dados sintéticos para CNH e BO (questão de LGPD)
 - Padrão ADR (Architecture Decision Record) adotado para documentação
 - Metodologia de continuidade entre chats definida (CONTEXT.md + Git)
+- **20/07/2026:** primeira sessão hands-on completa de provisionamento — Vision criado e conectado ao Foundry Project. Erros reais documentados em `docs/AI-103-STUDY-GUIDE.md` (soft-delete, categoria de connection errada gerando 400, mismatch de kind de recurso, arquivos "dataless" do iCloud travando leitura local). Maria pediu explicitamente aprender "onde clicar" no portal — próximas sessões devem manter esse formato de walkthrough manual, não automatizar via CLI/Bicep ainda
+- **21/07/2026:** Document Intelligence e AI Search provisionados e conectados sem erros novos (lições da sessão anterior já aplicadas). AI Search precisou mudar de região (East US 2 → East US) por falta de capacidade do tier Free — decisão consciente de manter Free em vez de pagar S1 (~US$250/mês) por consistência de região, sem justificativa de custo pro volume de uso do projeto. Storage provisionado já com hardening de segurança (Entra ID only, rede restrita por IP) — os outros 3 recursos ainda estão no padrão mais simples ("Chave da API", rede aberta); planejar hardening deles depois. **Pendência real para a próxima sessão:** conectar o Storage ao Foundry Project — ainda não foi feito, e como a key está desabilitada, provavelmente vai exigir um fluxo de connection via Microsoft Entra ID diferente dos outros 3 (que usaram "Chave da API"). Todos os 6 componentes de infra do stack planejado (Hub, Project, Vision, Doc Intel, Search, Storage) já existem no Azure.
+- **Preferência registrada:** sempre tentar Free tier primeiro em qualquer recurso novo; quando não for possível, estimar o custo fixo real (mesmo sem uso) antes de decidir — não pagar por conveniência/consistência sem justificativa de uso real.
+- **21/07/2026:** conferido `data/` — Car Damage Severity está completo e extraído (1.631 imagens, 3 classes). IDNet só tem o `.zip` de 20GB, e ele está corrompido (sem rodapé válido de ZIP — download foi interrompido, apesar do arquivo parecer ter o tamanho esperado). Bloqueio de senha do Kaggle já foi resolvido, então o próximo passo é só refazer o download do IDNet.
 
 ### Padrão de operação acordado
 
@@ -202,7 +205,7 @@ Ao final de cada sessão, atualizar:
 
 ## 🔄 Como retomar em novo chat
 
-1. Abrir novo chat com Claude
+1. Abrir nova sessão de AI pair programming
 2. Colar o conteúdo deste arquivo
 3. Dizer: *"Sou Maria. Estamos no projeto claim-intelligence para AI-103. Continue de onde paramos baseado neste CONTEXT.md."*
-4. Claude lerá o contexto e retomará a sessão
+4. O agente lerá o contexto e retomará a sessão

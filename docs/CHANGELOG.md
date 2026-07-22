@@ -16,9 +16,28 @@ e este projeto adota [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Definição da arquitetura macro do projeto
 - Identificação de datasets viáveis (Car Damage Severity, IDNet)
 - Decisão por dados sintéticos para CNH e BO (compliance LGPD)
+- Provisionamento do Foundry Hub (`hub-claim-intelligence`) e Foundry Project (`claim-analyzer`) em `rg-claim-intelligence` (East US 2)
+- Script `test_azure_connection.py` para smoke test de autenticação/conectividade via `azure-ai-projects` + `DefaultAzureCredential`
+- Recurso **Azure AI services** `vision-claim-intelligence` (East US 2) provisionado e conectado ao Foundry Project (connection tipo "Chave da API")
+- Recurso **Document Intelligence** `docintel-claim-intelligence` (East US 2) provisionado e conectado ao Foundry Project (connection tipo "Chave da API")
+- Recurso **Azure AI Search** `search-claim-intelligence` provisionado (Free tier, East US) e conectado ao Foundry Project
+- Recurso **Azure Blob Storage** `stclaimintelligence` (East US 2, Standard LRS) provisionado com Microsoft Entra ID only (`allowSharedKeyAccess=false`) e rede restrita por IP (`defaultAction=Deny` + `bypass=AzureServices`)
+- `docs/AI-103-STUDY-GUIDE.md` — manual de estudos hands-on para revisão pré-prova
+
+### Modificado
+- `.env.example` atualizado de `AZURE_AI_PROJECT_CONNECTION_STRING` (padrão `azure-ai-projects` 1.x) para `PROJECT_ENDPOINT` (padrão 2.x, instalado no projeto)
+- `requirements.txt` passa a listar `azure-ai-projects`, `azure-identity` e `python-dotenv`
+
+### Decisões técnicas
+- **Azure AI Search em East US, não East US 2:** tentativa de criação no Free tier em East US 2 falhou com `InsufficientResourcesAvailable` (falta de capacidade da região no momento). Decisão: manter Free em outra região em vez de pagar S1 (~US$ 250/mês fixo) só por consistência de região — sem justificativa de custo para o volume de uso do projeto. Detalhes em `docs/AI-103-STUDY-GUIDE.md`.
+- **Storage provisionado direto com hardening de segurança** (Entra ID only + rede restrita), diferente dos outros 3 recursos (ainda em "Chave da API" com rede aberta) — início de uma passada progressiva de least-privilege pelo projeto, alinhada a tópicos de segurança da AI-103.
+
+### Todos os recursos auxiliares provisionados
+- Foundry Hub, Foundry Project, Vision, Document Intelligence, AI Search e Storage — os 6 componentes de infraestrutura do stack planejado estão criados
 
 ### Em planejamento
-- Provisioning dos recursos Azure (Foundry Hub, AI Vision, Doc Intel, Search, Storage)
+- Conectar Storage ao Foundry Project via Microsoft Entra ID
+- Hardening de segurança dos demais recursos (Vision, Doc Intel, Search) para o mesmo padrão do Storage
 - Implementação do primeiro agent single-tool
 - Pipeline de ingestão de imagens
 - Pipeline de extração de documentos
