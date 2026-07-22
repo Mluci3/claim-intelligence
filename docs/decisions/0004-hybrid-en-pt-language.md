@@ -2,7 +2,7 @@
 
 **Status:** ✅ Accepted
 **Data:** 2026-06-08
-**Decisor:** Maria Lucia
+**Decisor:** Maria Lucilene
 
 ---
 
@@ -26,7 +26,7 @@ O projeto será publicado como portfolio público. Existem três abordagens para
 - ✅ **Inglês:** documentação técnica formal (README, ARCHITECTURE)
 - ✅ **Português:** comentários no código explicando lógica de negócio
 - ✅ **Português:** docstrings com explicações detalhadas (após resumo em inglês)
-- ✅ **Português:** ADRs e CHANGELOG (audience: Maria + tutoria)
+- ✅ **Português:** ADRs e CHANGELOG (audience: Maria + registro de estudo)
 
 ### Exemplo
 

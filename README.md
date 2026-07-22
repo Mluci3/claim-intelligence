@@ -209,7 +209,7 @@ Este projeto integra estudos para a certificação **Microsoft Azure AI App and 
 
 ### Autora
 
-**Maria Lucia** — AI Engineer
+**Maria Lucilene** — AI Engineer
 - 💼 [LinkedIn](#)
 - 🐙 [GitHub](https://github.com/Mluci3)
 - 🌐 Portfolio: paligeri, IARAA, Datathon Fase 05

@@ -1,19 +1,19 @@
-# ADR-0006: Estratégia CONTEXT.md + Git para continuidade entre chats
+# ADR-0006: Context Engineering Strategy — CONTEXT.md + Git para continuidade entre sessões de AI pair programming
 
 **Status:** ✅ Accepted
 **Data:** 2026-06-08
-**Decisor:** Maria Lucia (tutoria via Claude)
+**Decisor:** Maria Lucilene
 
 ---
 
 ## Contexto
 
-Sessões de tutoria com Claude têm **limite de contexto** (tokens). Em projetos longos como claim-intelligence (6 semanas, múltiplas sessões), é necessária estratégia para manter continuidade sem perder decisões e estado.
+Sessões de **AI pair programming** têm **limite de contexto** (tokens). Em projetos longos como claim-intelligence (6 semanas, múltiplas sessões), é necessária estratégia de *context engineering* para manter continuidade sem perder decisões e estado.
 
 Alternativas avaliadas:
 
-1. **Claude Projects** (feature paga) — memória persistente
-2. **Apenas Memory do Claude** (gratuita) — pode falhar em conversas muito longas
+1. **Memória nativa paga da ferramenta de IA** — memória persistente, mas com custo recorrente e lock-in
+2. **Apenas memória automática gratuita** — pode falhar em conversas muito longas
 3. **CONTEXT.md + Git** — fonte da verdade externa
 4. **Híbrido CONTEXT.md + Memory + Git** — máxima resiliência
 
@@ -34,7 +34,7 @@ Alternativas avaliadas:
 - Atualizado ao final de cada sessão de desenvolvimento
 - Em novo chat: cole o conteúdo + diga "continue de onde paramos"
 
-### Camada 3: Memory do Claude (gratuito)
+### Camada 3: Memória automática do agente de codificação (gratuita)
 - Captura contexto recente automaticamente
 - Backup de informações entre sessões próximas
 
@@ -85,11 +85,11 @@ Alternativas avaliadas:
 
 ### Positivas
 - ✅ **Resiliência** — 3 camadas garantem continuidade
-- ✅ **Gratuito** — não requer Claude Pro
+- ✅ **Gratuito** — não requer plano pago de nenhuma ferramenta
 - ✅ **Auditável** — histórico no Git mostra evolução
-- ✅ **Portabilidade** — funciona com qualquer LLM (não só Claude)
+- ✅ **Portabilidade** — funciona com qualquer LLM/agente de codificação (CLI, IDE plugin, etc.)
 - ✅ **Documentação viva** — projeto se documenta sozinho
-- ✅ **Onboarding rápido** — qualquer pessoa (ou Claude) entende em 5 min
+- ✅ **Onboarding rápido** — qualquer pessoa entende em 5 min
 - ✅ **Audit trail** — útil para portfolio (recrutadores veem evolução)
 
 ### Negativas
@@ -98,7 +98,7 @@ Alternativas avaliadas:
 
 ### Mitigações
 - Atualização do CONTEXT.md é parte do "ritual de fim de sessão"
-- Tutor (Claude) lembra de atualizar ao final de cada bloco
+- Lembrete de atualizar ao final de cada bloco de trabalho
 - Template padronizado facilita atualização rápida
 
 ---
@@ -125,30 +125,30 @@ Alternativas avaliadas:
    - Criar novo ADR em `docs/decisions/`
    - Adicionar entry no CHANGELOG.md
 
-### Ao iniciar nova sessão (mesmo chat)
+### Ao iniciar nova sessão (mesma sessão de AI pair programming)
 
-- Claude consulta CONTEXT.md no início para retomar contexto
+- CONTEXT.md é consultado no início para retomar contexto
 
-### Ao iniciar novo chat
+### Ao iniciar nova sessão de AI pair programming
 
-1. Maria abre novo chat com Claude
+1. Maria abre uma nova sessão
 2. Cola conteúdo do CONTEXT.md
 3. Diz: *"Sou Maria. Estamos no projeto claim-intelligence para AI-103. Continue de onde paramos baseado neste CONTEXT.md."*
-4. Claude lê o contexto e retoma
+4. O agente lê o contexto e retoma
 
 ---
 
 ## Alternativas Consideradas
 
-### Alternativa 1: Apenas Claude Projects (paga)
+### Alternativa 1: Apenas memória nativa paga da ferramenta de IA
 
 **Prós:**
-- Memória nativa do Claude
+- Memória persistente nativa
 - Sem necessidade de manter CONTEXT.md
 
 **Contras:**
-- Requer plano Claude Pro (custo recorrente)
-- Lock-in na plataforma Claude
+- Requer plano pago (custo recorrente)
+- Lock-in na plataforma específica
 - Sem versionamento de decisões
 
 **Decisão:** Rejeitada — solução gratuita é igualmente eficaz com disciplina.

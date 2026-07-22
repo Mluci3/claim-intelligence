@@ -2,7 +2,7 @@
 
 **Status:** ✅ Accepted
 **Data:** 2026-06-08
-**Decisor:** Maria Lucia (tutoria via Claude)
+**Decisor:** Maria Lucilene
 
 ---
 
