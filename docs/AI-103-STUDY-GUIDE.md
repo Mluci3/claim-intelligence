@@ -15,6 +15,7 @@
 6. [Autenticação: DefaultAzureCredential na prática](#6-autenticação-defaultazurecredential-na-prática)
 7. [Armadilhas encontradas (erros reais)](#7-armadilhas-encontradas-erros-reais)
 8. [Free tier: disponibilidade varia por região](#8-free-tier-disponibilidade-varia-por-região)
+9. [RBAC granular e o que realmente cai na AI-103](#9-rbac-granular-e-o-que-realmente-cai-na-ai-103)
 
 ---
 
@@ -161,6 +162,36 @@ Nem toda região do Azure tem capacidade de Free tier disponível o tempo todo �
 **Princípio adotado no projeto:** sempre tentar Free tier primeiro; se a região planejada não tiver capacidade, trocar de região mantendo Free em vez de migrar para tier pago por conveniência. Antes de aceitar um custo fixo recorrente, sempre estimar o valor real (ex: AI Search S1 ≈ US$ 250/mês, cobrado mesmo sem uso) e comparar com o volume de uso real do projeto — em projetos de estudo/portfolio, quase nunca se justifica.
 
 Caso real: `search-claim-intelligence` ficou em **East US** em vez de **East US 2** (região do resto do stack) por esse motivo — latência extra entre regiões próximas é desprezível para o volume de uso do projeto, então a economia venceu a consistência de região.
+
+---
+
+## 9. RBAC granular e o que realmente cai na AI-103
+
+Ao conectar o Storage (com key desabilitada) ao Foundry Project, veio à tona uma prática de segurança enterprise: **escopar RBAC no nível mais restrito possível**, não na conta/recurso inteiro.
+
+**O que fizemos:**
+- Cada recurso Foundry (Hub e Project) tem sua própria **Managed Identity (System-Assigned)** — são identidades diferentes, não confundir uma com a outra
+- Em vez de dar `Storage Blob Data Contributor` na conta inteira, criamos os containers primeiro (`damage-images`, `documents`) e demos a role **em cada container** separadamente
+- Removemos a permissão ampla depois de confirmar que as granulares funcionam
+- Custo: **zero** — role assignment (RBAC) nunca tem custo, independente de quantos você cria ou em que escopo
+
+**Comando-chave (verificação, não é destrutivo):**
+```
+az role assignment list --assignee <object-id> --scope <resource-id>
+```
+
+**O que é exam-relevant vs não, nesse tema (domínio "Plan and manage AI solution", ~25-30% da prova — o maior domínio):**
+
+| Tópico | Cai na prova? |
+|---|---|
+| RBAC roles específicas de recursos de IA (`Cognitive Services User/Contributor`, `Storage Blob Data Reader/Contributor`) | ✅ Sim, aprofundar |
+| Managed Identity: System-Assigned vs User-Assigned, quando usar cada um | ✅ Sim, aprofundar |
+| Conceito de Private Endpoint / isolar rede de recursos de IA | ✅ Sim, mas conceitual — não precisa saber configurar VNet do zero |
+| Content Safety, PII Detection, Application Insights para IA | ✅ Sim, domínio explícito |
+| Diagnostic Settings / Log Analytics (config detalhada) | 🟡 Superficial — saiba que existe, não decore passo a passo |
+| Terraform/Bicep (IaC) em profundidade | ❌ Não — é AZ-104/AZ-305 |
+| PIM (Privileged Identity Management) | ❌ Não — é Entra ID/segurança avançada, fora do escopo |
+| Resource Locks, governança geral (tags, cost) | ❌ Não é foco — governança genérica do Azure, não específica de IA |
 
 ---
 
