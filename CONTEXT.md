@@ -64,7 +64,7 @@ rg-claim-intelligence
 └── Azure Blob Storage: stclaimintelligence (East US 2 — Entra ID only, rede restrita)
 ```
 
-> **Nota de segurança — Storage:** provisionado com `allowSharedKeyAccess=false` (sem key estática, só Microsoft Entra ID/RBAC) e `networkRuleSet.defaultAction=Deny` com IP da Maria liberado + `bypass=AzureServices`. Padrão mais rígido que os outros 3 recursos (que ainda usam "Chave da API"); decisão de progressivamente aplicar least-privilege conforme a certificação cobra.
+> **Nota de segurança — Storage:** provisionado com `allowSharedKeyAccess=false` (sem key estática, só Microsoft Entra ID/RBAC) e `networkRuleSet.defaultAction=Deny` com IP da Maria liberado + `bypass=AzureServices`. Padrão mais rígido que os outros 3 recursos (que ainda usam "Chave da API"); decisão de progressivamente aplicar least-privilege conforme a certificação cobra. RBAC da Managed Identity do Foundry Project escopado por container (`damage-images`, `documents`) com role `Storage Blob Data Contributor`, não na conta inteira — role assignment não tem custo, então dá pra ser rigoroso sem afetar o orçamento zero do projeto.
 
 > **Nota de região — Azure AI Search:** provisionado em **East US**, não East US 2 como o resto do stack. Motivo: tentativa de criação em East US 2 falhou com `InsufficientResourcesAvailable` (capacidade do tier Free esgotada na região no momento). Decisão consciente: manter Free (custo R$ 0) em vez de pagar S1 (~US$ 250/mês fixo) só para manter consistência de região — não se justifica para o volume de uso do projeto (poucos documentos, baixo volume de queries). Latência extra entre East US e East US 2 é desprezível para esse caso de uso.
 
@@ -128,14 +128,14 @@ python-dotenv         → configuração via .env
 
 ### 🔄 Em andamento
 
-- Conectar o Storage ao Foundry Project (provavelmente via Entra ID, não "Chave da API" — key access está desabilitada)
+- Nenhuma tarefa de infraestrutura em andamento — provisionamento e conexão dos 4 recursos concluídos
 
 ### ⏭️ Próximos passos (ordem)
 
-1. Conectar `stclaimintelligence` ao Foundry Project via Microsoft Entra ID
-2. Refazer o download do IDNet (zip anterior de 20GB corrompido — ver nota abaixo)
-3. Criar o agente `claim-processor` 100% via código Python (SDK)
-4. Implementar a primeira tool (single-agent) — provavelmente Vision, já que a connection está pronta e o dataset Car Damage Severity já está pronto
+1. Refazer o download do IDNet (zip anterior de 20GB corrompido — ver nota abaixo)
+2. Criar o agente `claim-processor` 100% via código Python (SDK)
+3. Implementar a primeira tool (single-agent) — provavelmente Vision, já que a connection está pronta e o dataset Car Damage Severity já está pronto
+4. (Futuro) Aplicar o mesmo padrão de hardening do Storage (Entra ID only, RBAC granular) em Vision/Doc Intel/Search
 
 ---
 
@@ -158,6 +158,7 @@ Nenhum bloqueio ativo no momento (senha do Kaggle recuperada em 21/07/2026).
 - **21/07/2026:** Document Intelligence e AI Search provisionados e conectados sem erros novos (lições da sessão anterior já aplicadas). AI Search precisou mudar de região (East US 2 → East US) por falta de capacidade do tier Free — decisão consciente de manter Free em vez de pagar S1 (~US$250/mês) por consistência de região, sem justificativa de custo pro volume de uso do projeto. Storage provisionado já com hardening de segurança (Entra ID only, rede restrita por IP) — os outros 3 recursos ainda estão no padrão mais simples ("Chave da API", rede aberta); planejar hardening deles depois. **Pendência real para a próxima sessão:** conectar o Storage ao Foundry Project — ainda não foi feito, e como a key está desabilitada, provavelmente vai exigir um fluxo de connection via Microsoft Entra ID diferente dos outros 3 (que usaram "Chave da API"). Todos os 6 componentes de infra do stack planejado (Hub, Project, Vision, Doc Intel, Search, Storage) já existem no Azure.
 - **Preferência registrada:** sempre tentar Free tier primeiro em qualquer recurso novo; quando não for possível, estimar o custo fixo real (mesmo sem uso) antes de decidir — não pagar por conveniência/consistência sem justificativa de uso real.
 - **21/07/2026:** conferido `data/` — Car Damage Severity está completo e extraído (1.631 imagens, 3 classes). IDNet só tem o `.zip` de 20GB, e ele está corrompido (sem rodapé válido de ZIP — download foi interrompido, apesar do arquivo parecer ter o tamanho esperado). Bloqueio de senha do Kaggle já foi resolvido, então o próximo passo é só refazer o download do IDNet.
+- **29/07/2026:** Storage conectado ao Foundry Project via Microsoft Entra ID. RBAC da Managed Identity do Project (`22c5dcd0-...`, distinta da identity do Hub) escopado por container (`damage-images`, `documents`) com `Storage Blob Data Contributor`, sem permissão ampla na conta — reforça o princípio de least-privilege sem custo, já que role assignment é sempre gratuito. Os 4 recursos auxiliares estão provisionados E conectados; próxima infraestrutura pendente é só o hardening dos outros 3 (Vision/Doc Intel/Search), que fica pra depois.
 
 ### Padrão de operação acordado
 
