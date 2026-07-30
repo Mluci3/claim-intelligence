@@ -152,6 +152,7 @@ Registro de erros reais batidos durante o desenvolvimento — cada um é matéri
 | `client.connections.list()` retorna vazio | Recurso existe no Azure mas nunca foi registrado como Connection no Project | Provisionar recurso ≠ conectar recurso; são dois passos manuais separados |
 | Leitura de arquivos do projeto trava com "Operation timed out" | Arquivos "dataless" — placeholders do iCloud Drive (Desktop & Documents sync) evictados do disco local | Reboot ou "Baixar Agora" no Finder materializa o conteúdo de volta |
 | `Deployment ... failed` / `InsufficientResourcesAvailable` ao criar Azure AI Search Free | Região sem capacidade disponível para novos serviços Free naquele momento — não é erro de configuração | Trocar de região resolve (ex: East US 2 → East US); antes de migrar para tier pago só por causa disso, calcular custo fixo real (S1 ≈ US$ 250/mês) contra o volume de uso real do projeto |
+| Zip de dataset grande do Kaggle corrompido após download (`cannot find zipfile directory`) | Dataset embalado pelo Kaggle como um único arquivo monolítico (`files-archive`); download de dezenas de GB foi interrompido sem erro visível | Antes de baixar um dataset grande, rodar `kaggle datasets files <dataset>` — se vier como arquivos individuais (não um `files-archive` único), dá pra baixar só uma amostra com `kaggle datasets download -f <arquivo>`, evitando o problema de vez |
 
 ---
 

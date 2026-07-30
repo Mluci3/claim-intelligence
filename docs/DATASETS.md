@@ -52,42 +52,42 @@ data/
 
 ---
 
-## 🪪 Dataset 2: IDNet (Synthetic Driver Licenses)
+## 🪪 Dataset 2: Synthetic EU Driver's Licences (amostra)
+
+> **Substitui o IDNet original** (descartado em 21/07/2026 — ver nota abaixo).
 
 ### Origem
 - **Plataforma:** Kaggle
-- **Autor:** IDNet research team
-- **URL:** https://www.kaggle.com/datasets/chitreshkr/idnet-identity-document-analysis
-- **Licença:** Research use
-- **Paper:** [arXiv 2408.01690](https://arxiv.org/html/2408.01690v1)
+- **Autor:** felipebandeiraramos
+- **URL:** https://www.kaggle.com/datasets/felipebandeiraramos/synthetic-eu-drivers-licences
+- **Licença:** conforme página do dataset no Kaggle
 
 ### Conteúdo
-- 597.900 imagens **sintéticas** de driver licenses
-- 10 estados americanos
-- Inclui versões legítimas e forjadas (para detecção de fraude)
+- Imagens **sintéticas** de carteiras de motorista no padrão europeu
+- Categorias de habilitação (A, B, C...) estruturalmente próximas do sistema brasileiro (CNH), diferente do modelo americano (que varia por estado e não segue esse padrão de letras)
 - **Totalmente gerado por AI** — nenhuma pessoa real
+- Amostra de **30 imagens** baixada (não o dataset completo — arquivos individuais, ~1.2MB cada)
 
 ### Uso no Projeto
-- **Teste** do tool `extract_cnh_data` (adaptado para contexto US/BR)
-- **Demonstração** de Document Intelligence prebuilt-idDocument
-- **Detecção de adulteração** (extensão futura)
+- **Teste** do tool `extract_cnh_data` (adaptado para contexto BR — foco no conceito de extração de campos de habilitação: categoria, validade, data de emissão)
+- **Demonstração** de Document Intelligence prebuilt-idDocument e/ou modelo customizado
 
 ### Localização Local
 ```
 data/
 └── idnet_sample/
-    ├── california/
-    ├── texas/
-    └── new_york/
+    └── eu_licenses/
+        ├── generated_license_0.png
+        ├── generated_license_1.png
+        └── ... (30 arquivos)
 ```
 
 ### Compliance
 - ✅ Dataset 100% sintético
 - ✅ Nenhuma pessoa real envolvida
-- ✅ Uso para pesquisa permitido
 
-### ⚠️ Limitação Conhecida
-IDNet contém CNHs americanas. Para demonstração de contexto brasileiro, complementaremos com CNHs sintéticas brasileiras geradas manualmente (ver Dataset 4).
+### ⚠️ Nota histórica — troca de dataset (21/07/2026)
+O dataset original planejado (**IDNet**, `chitreshkr/idnet-identity-document-analysis`) foi descartado por dois motivos: (1) o download de ~20-49GB corrompeu duas vezes (arquivo sem rodapé ZIP válido) e o Kaggle empacota o dataset como um único arquivo monolítico, sem suporte a download parcial via API; (2) mesmo se baixado corretamente, o volume (597.900 imagens, múltiplos estados americanos) é muito maior do que o projeto precisa — Document Intelligence não exige milhares de imagens de treino, e a AI-103 avalia entendimento de conceitos (prebuilt vs custom model), não volume de dados. Um dataset alternativo em formato de arquivos individuais (não um zip monolítico) permitiu baixar só uma amostra de 30 imagens, resolvendo os dois problemas de uma vez.
 
 ---
 
@@ -283,8 +283,15 @@ data/
 # Car Damage Severity
 kaggle datasets download -d prajwalbhamere/car-damage-severity-dataset -p data/car_damage_severity --unzip
 
-# IDNet (sample, dataset completo é muito grande)
-kaggle datasets download -d chitreshkr/idnet-identity-document-analysis -p data/idnet_sample --unzip
+# Synthetic EU Driver's Licences (amostra de arquivos individuais, não o dataset inteiro)
+mkdir -p data/idnet_sample/eu_licenses
+for i in $(seq 0 29); do
+  kaggle datasets download -d felipebandeiraramos/synthetic-eu-drivers-licences \
+    -f "upload/Original/generated_license_${i}.png" \
+    -p data/idnet_sample/eu_licenses --force
+done
+# a CLI empacota cada arquivo individual num .zip — extrair e limpar depois:
+cd data/idnet_sample/eu_licenses && for f in *.zip; do unzip -o -q "$f" && rm "$f"; done && cd -
 ```
 
 ### Datasets Sintéticos (a gerar)
@@ -300,8 +307,8 @@ Os BOs, CNHs brasileiras e apólices serão gerados via:
 
 | Dataset | Tipo | Fonte | Compliance | Status |
 |---------|------|-------|------------|--------|
-| Car Damage Severity | Imagens | Kaggle público | ✅ | A baixar |
-| IDNet | Imagens sintéticas | Kaggle (sintético) | ✅ | A baixar |
+| Car Damage Severity | Imagens | Kaggle público | ✅ | ✅ Baixado (1.631 imagens) |
+| Synthetic EU Driver's Licences (amostra) | Imagens sintéticas | Kaggle (sintético) | ✅ | ✅ Baixado (30 imagens) |
 | BOs Sintéticos | PDFs | Geração própria | ✅ | A gerar |
 | CNHs BR Sintéticas | Imagens | Geração própria | ✅ | A gerar |
 | Apólices Fictícias | Markdown/PDF | Criação própria | ✅ | A gerar |
