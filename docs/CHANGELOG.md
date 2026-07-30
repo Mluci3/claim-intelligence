@@ -32,6 +32,11 @@ e este projeto adota [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - **Azure AI Search em East US, não East US 2:** tentativa de criação no Free tier em East US 2 falhou com `InsufficientResourcesAvailable` (falta de capacidade da região no momento). Decisão: manter Free em outra região em vez de pagar S1 (~US$ 250/mês fixo) só por consistência de região — sem justificativa de custo para o volume de uso do projeto. Detalhes em `docs/AI-103-STUDY-GUIDE.md`.
 - **Storage provisionado direto com hardening de segurança** (Entra ID only + rede restrita), diferente dos outros 3 recursos (ainda em "Chave da API" com rede aberta) — início de uma passada progressiva de least-privilege pelo projeto, alinhada a tópicos de segurança da AI-103.
 
+### Dataset de documentos de identidade trocado
+- IDNet (`chitreshkr/idnet-identity-document-analysis`) descartado — pacote monolítico de 49GB sem suporte a download parcial, volume desnecessário para o caso de uso
+- Substituído por amostra de 30 imagens de `felipebandeiraramos/synthetic-eu-drivers-licences` — categorias de habilitação (A/B/C) mais próximas estruturalmente da CNH brasileira que o padrão americano
+- `docs/DATASETS.md` atualizado com a decisão e o motivo
+
 ### Todos os recursos auxiliares provisionados e conectados
 - Foundry Hub, Foundry Project, Vision, Document Intelligence, AI Search e Storage — os 6 componentes de infraestrutura do stack planejado estão criados, e as 4 connections (Vision, Doc Intel, Search, Storage) estão ativas no Foundry Project
 - Storage conectado via Microsoft Entra ID; containers `damage-images` e `documents` criados; RBAC da Managed Identity do Foundry Project escopado por container (`Storage Blob Data Contributor`), sem permissão ampla na conta

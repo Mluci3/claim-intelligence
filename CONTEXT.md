@@ -86,7 +86,7 @@ python-dotenv         → configuração via .env
 
 ```
 ✅ Car Damage Severity (Kaggle, 1.631 imagens) — baixado e extraído em data/car_damage_severity/
-❌ IDNet (Kaggle, CNHs sintéticas) — download corrompido (zip de 20GB sem rodapé válido, precisa refazer)
+✅ Synthetic EU Driver's Licences (Kaggle, amostra de 30 imagens) — substitui o IDNet, ver docs/DATASETS.md
 🛠️ BOs sintéticos (gerar com templates públicos)
 🛠️ Apólices fictícias (criar 10-15 em MD/PDF)
 ```
@@ -132,9 +132,9 @@ python-dotenv         → configuração via .env
 
 ### ⏭️ Próximos passos (ordem)
 
-1. Refazer o download do IDNet (zip anterior de 20GB corrompido — ver nota abaixo)
-2. Criar o agente `claim-processor` 100% via código Python (SDK)
-3. Implementar a primeira tool (single-agent) — provavelmente Vision, já que a connection está pronta e o dataset Car Damage Severity já está pronto
+1. Criar o agente `claim-processor` 100% via código Python (SDK)
+2. Implementar a primeira tool (single-agent) — provavelmente Vision, já que a connection está pronta e o dataset Car Damage Severity já está pronto
+3. Testar a tool `extract_cnh_data` com a amostra de carteiras EU (Document Intelligence)
 4. (Futuro) Aplicar o mesmo padrão de hardening do Storage (Entra ID only, RBAC granular) em Vision/Doc Intel/Search
 
 ---
@@ -159,6 +159,7 @@ Nenhum bloqueio ativo no momento (senha do Kaggle recuperada em 21/07/2026).
 - **Preferência registrada:** sempre tentar Free tier primeiro em qualquer recurso novo; quando não for possível, estimar o custo fixo real (mesmo sem uso) antes de decidir — não pagar por conveniência/consistência sem justificativa de uso real.
 - **21/07/2026:** conferido `data/` — Car Damage Severity está completo e extraído (1.631 imagens, 3 classes). IDNet só tem o `.zip` de 20GB, e ele está corrompido (sem rodapé válido de ZIP — download foi interrompido, apesar do arquivo parecer ter o tamanho esperado). Bloqueio de senha do Kaggle já foi resolvido, então o próximo passo é só refazer o download do IDNet.
 - **29/07/2026:** Storage conectado ao Foundry Project via Microsoft Entra ID. RBAC da Managed Identity do Project (`22c5dcd0-...`, distinta da identity do Hub) escopado por container (`damage-images`, `documents`) com `Storage Blob Data Contributor`, sem permissão ampla na conta — reforça o princípio de least-privilege sem custo, já que role assignment é sempre gratuito. Os 4 recursos auxiliares estão provisionados E conectados; próxima infraestrutura pendente é só o hardening dos outros 3 (Vision/Doc Intel/Search), que fica pra depois.
+- **29/07/2026:** IDNet descartado definitivamente — dataset é um pacote monolítico de 49GB (não 20GB como parecia), sem suporte a download parcial via API do Kaggle, e volume muito maior do que o projeto precisa. Substituído por `felipebandeiraramos/synthetic-eu-drivers-licences` (arquivos individuais, baixamos só 30 amostras via `kaggle datasets download -f`). Categorias de habilitação do padrão EU (A/B/C) são estruturalmente mais próximas da CNH brasileira do que o padrão americano — Maria identificou corretamente que passaporte (outra opção considerada) não serviria, porque o projeto precisa de campos específicos de habilitação (categoria, validade) pra lógica de decisão de sinistro. Detalhes completos em `docs/DATASETS.md`.
 
 ### Padrão de operação acordado
 
