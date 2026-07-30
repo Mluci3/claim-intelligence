@@ -12,9 +12,9 @@
 - **Projeto:** claim-intelligence
 - **Domínio:** Análise inteligente de sinistros automotivos
 - **Certificação alvo:** AI-103 (Azure AI App and Agent Developer Associate)
-- **Data prevista da prova:** 15-31/07/2026
+- **Data prevista da prova:** 15-30/08/2026
 - **Início do projeto:** 08/06/2026
-- **Última atualização:** 20/07/2026
+- **Última atualização:** 29/07/2026
 
 ---
 
@@ -29,9 +29,9 @@ Construir uma plataforma multi-agent enterprise-grade que automatiza análise de
 - **Nome:** Maria Lucilene
 - **Cargo:** AI Engineer @ Minsait (GOLLabs squad)
 - **Stack atual:** Python, LangChain, Azure AI, Copilot Studio, Power Automate
-- **Projetos relevantes:** Datathon Fase 05 (MLOps), paligeri (RAG clínico), IARAA (RAG agroecologia), FlightOps (Copilot Studio em produção)
+- **Projetos relevantes:** Datathon Fase 05 (MLOps), Paligeri (RAG clínico), IARAA (RAG agroecologia), FlightOps (Copilot Studio em produção)
 - **Localização:** Brasil (São Paulo)
-- **Idiomas:** Português (nativo), Inglês (em estudo)
+- **Idiomas:** Português (nativo), Inglês (B1)
 
 ---
 
@@ -50,14 +50,14 @@ Construir uma plataforma multi-agent enterprise-grade que automatiza análise de
 
 ## 🔧 Stack Técnico
 
-### Azure Resources (a provisionar)
+### Azure Resources (provisionados ✅ — infra completa)
 
 ```
 rg-claim-intelligence
 ├── Foundry Hub: hub-claim-intelligence (East US 2)
 │   └── Foundry Project: claim-analyzer (East US 2)
-│       ├── Agent: claim-processor
-│       └── Connections: Vision ✅, Doc Intel ✅, Search ✅, Storage ⏳
+│       ├── Agent: claim-processor ⏳ (a criar)
+│       └── Connections: Vision ✅, Doc Intel ✅, Search ✅, Storage ✅
 ├── Azure AI Vision: vision-claim-intelligence (East US 2)
 ├── Document Intelligence: docintel-claim-intelligence (East US 2)
 ├── Azure AI Search: search-claim-intelligence (East US — ver nota de região abaixo)
@@ -95,15 +95,16 @@ python-dotenv         → configuração via .env
 
 ## 📅 Cronograma
 
-| Semana | Período | Fase | Foco |
-|--------|---------|------|------|
-| 1 | 09-15/06 | Foundation Reset | Setup Foundry + estrutura inicial |
-| 2 | 16-22/06 | Agents Fundamentos | Single-agent + tool calling |
-| 3 | 23-29/06 | RAG + Multi-agent | Azure AI Search + orchestration |
-| 4 | 30/06-06/07 | Planning & Ops | Security, RBAC, Evaluations |
-| 5 | 07-13/07 | Vision + Text + Extract | Domínios específicos |
-| 6 | 14-20/07 | Simulados + revisão | Preparação final |
-| - | 21-31/07 | **PROVA** | Janela de execução |
+> ⚠️ **Reconstruído em 29/07/2026.** O plano original (6 semanas, prova 21-31/07) previa 1 semana para provisionamento — na prática levou de 08/06 a 29/07 (~7 semanas), então a prova foi remarcada para 15-30/08. Cronograma abaixo reflete o estado real do projeto, não o plano original.
+
+| Período | Fase | Foco | Status |
+|---------|------|------|--------|
+| 08/06 – 29/07 | Foundation Reset | Planejamento, ADRs, provisionamento dos 6 recursos Azure, 4 connections, hardening inicial do Storage | ✅ Concluído |
+| 29/07 – 04/08 | Agent Implementation | Criar `claim-processor` via SDK, primeira tool (Vision — `analyze_damage_image`) | 🔄 Próximo |
+| 05/08 – 11/08 | Extract + RAG | Tools `extract_cnh_data` (Doc Intelligence) e `extract_bo_data`; indexar apólices fictícias no AI Search; tool `search_policies` | ⏳ |
+| 12/08 – 14/08 | Planning & Ops | Evaluations (groundedness, relevance, safety); hardening de segurança nos 3 recursos restantes (Entra ID); Observability básica | ⏳ |
+| 15/08 – 25/08 | Simulados + revisão | Questões estilo AI-103 por domínio, revisão dos pontos fracos | ⏳ |
+| 15/08 – 30/08 | **PROVA** | Janela de execução — agendar depois de fechar os simulados | ⏳ |
 
 ---
 
@@ -182,7 +183,7 @@ Nenhum bloqueio ativo no momento (senha do Kaggle recuperada em 21/07/2026).
 ### Datasets
 
 - [Car Damage Severity](https://www.kaggle.com/datasets/prajwalbhamere/car-damage-severity-dataset)
-- [IDNet](https://www.kaggle.com/datasets/chitreshkr/idnet-identity-document-analysis)
+- [Synthetic EU Driver's Licences](https://www.kaggle.com/datasets/felipebandeiraramos/synthetic-eu-drivers-licences)
 - [VehiDE (backup)](https://www.kaggle.com/datasets/hendrichscullen/vehide-dataset-automatic-vehicle-damage-detection)
 
 ### Documentação oficial AI-103
