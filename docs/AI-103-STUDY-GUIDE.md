@@ -16,6 +16,7 @@
 7. [Armadilhas encontradas (erros reais)](#7-armadilhas-encontradas-erros-reais)
 8. [Free tier: disponibilidade varia por região](#8-free-tier-disponibilidade-varia-por-região)
 9. [RBAC granular e o que realmente cai na AI-103](#9-rbac-granular-e-o-que-realmente-cai-na-ai-103)
+10. [Function Tools e o loop de tool calling](#10-function-tools-e-o-loop-de-tool-calling)
 
 ---
 
@@ -146,6 +147,7 @@ Registro de erros reais batidos durante o desenvolvimento — cada um é matéri
 | Sintoma | Causa raiz | Lição |
 |---|---|---|
 | `ModuleNotFoundError: No module named 'azure'` | Script rodando com o Python do sistema/pyenv, não o venv do projeto | Sempre confirmar `which python` aponta pro venv correto antes de rodar |
+| `InvalidRequest: The feature 'Caption' is not supported in this region` (Azure AI Vision) | Feature parity regional — nem toda feature do Image Analysis (Caption, Dense Captions, etc.) está disponível em toda região. `vision-claim-intelligence` está em East US 2, que não suporta Caption | `Tags` tem disponibilidade ampla e sustenta a heurística sozinho; ao planejar features de um serviço, sempre checar a [tabela de disponibilidade regional](https://learn.microsoft.com/azure/ai-services/computer-vision/overview-image-analysis) antes de assumir que tudo funciona em toda região |
 | Import trava indefinidamente (`KeyboardInterrupt` aponta pra `get_data` do importlib, lendo um `.py` de dentro do venv) | Mesmo problema de arquivos "dataless" do iCloud, agora atingindo o `.venv` inteiro (milhares de arquivos), não só docs — porque o venv mora dentro da pasta Documents sincronizada | **Correção definitiva** (não só paliativa): recriar o venv **fora** de qualquer pasta sincronizada por nuvem (ex: `~/.venvs/<projeto>` em vez de `<repo>/.venv`). Venv é sempre regenerável — nunca deveria estar em pasta sincronizada/versionada |
 | `zsh: command not found: az` | Azure CLI não instalado | `brew install azure-cli`; é pré-requisito separado do SDK Python |
 | Criar recurso e nome "já existe" mesmo após deletar | Soft-delete prendendo o nome | `az cognitiveservices account purge` |
@@ -194,6 +196,28 @@ az role assignment list --assignee <object-id> --scope <resource-id>
 | Terraform/Bicep (IaC) em profundidade | ❌ Não — é AZ-104/AZ-305 |
 | PIM (Privileged Identity Management) | ❌ Não — é Entra ID/segurança avançada, fora do escopo |
 | Resource Locks, governança geral (tags, cost) | ❌ Não é foco — governança genérica do Azure, não específica de IA |
+
+---
+
+## 10. Function Tools e o loop de tool calling
+
+Conceito central do domínio "Generative AI & agentic solutions" (30-35% da prova, o maior peso).
+
+**Dois tipos de tool no Foundry Agent Service:**
+- **Hospedadas/gerenciadas** (`AzureAISearchTool`, `BingGroundingTool`, `CodeInterpreterTool`): o próprio Foundry executa a chamada por trás — você só aponta a connection.
+- **Function Tools** (`FunctionTool`): você implementa a lógica. O Foundry só descreve o contrato (nome, descrição, JSON schema dos parâmetros) pro modelo; quem executa é o seu código.
+
+**Quando usar Function Tool:** sempre que o serviço que você quer integrar não tem uma tool hospedada dedicada (caso do Azure AI Vision — não existe `AzureAIVisionTool` pronto).
+
+**O loop nunca é uma chamada só:**
+1. `responses.create(..., tools=[...])` — pode devolver um item `type="function_call"` (nome + argumentos JSON + `call_id`), em vez de texto final
+2. Seu código executa a função de verdade
+3. Segunda chamada: `responses.create(..., input=[{"type": "function_call_output", "call_id": ..., "output": ...}], previous_response_id=response.id)`
+4. Só essa segunda resposta traz o texto final, já incorporando o resultado
+
+**Princípio de design importante:** a tool deve devolver **fatos/observações brutas** (aqui: tags e confidence do Vision), não a decisão final. Quem decide é o modelo, seguindo as `instructions` do agent. Validado na prática: nossa tool retornou `"indeterminado"` (sinal fraco) e o agent — seguindo a instrução "se faltar evidência, recomende análise manual" — tomou a decisão certa sozinho, sem regra hardcoded pra esse caso.
+
+**`strict: true` na tool:** exige `additionalProperties: false` e todo campo em `properties` listado em `required` — regra da OpenAI Responses API pra garantir que o modelo sempre gere argumentos no formato exato esperado.
 
 ---
 

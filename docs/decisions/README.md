@@ -27,6 +27,7 @@ Um Architecture Decision Record (ADR) é um documento que captura uma decisão a
 | [0004](0004-hybrid-en-pt-language.md) | Híbrido EN/PT — código EN, comentários PT | ✅ Accepted | 2026-06-08 |
 | [0005](0005-isolated-resource-group.md) | Resource Group isolado do projeto paligeri | ✅ Accepted | 2026-06-08 |
 | [0006](0006-context-md-strategy.md) | Estratégia CONTEXT.md + Git para continuidade | ✅ Accepted | 2026-06-08 |
+| [0007](0007-heuristic-damage-severity-phase1.md) | Classificação heurística de severidade na fase 1 (Custom Vision adiado) | ✅ Accepted | 2026-08-02 |
 
 ---
 
