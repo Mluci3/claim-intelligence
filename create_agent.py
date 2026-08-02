@@ -1,9 +1,10 @@
 """
 Cria (ou atualiza) o agent claim-processor no Foundry Project via SDK.
 
-Fase 1 (ADR-0002): single-agent, sem tools ainda. As tools (Vision,
-Document Intelligence, AI Search) serão adicionadas em versões
-subsequentes do agent, uma a uma.
+Cada execução deste script cria uma NOVA VERSÃO do agent (create_version
+é sempre incremental, não sobrescreve). v1 não tinha tools; v2 adiciona
+analyze_damage_image (ver ADR-0007 para a decisão de usar heurística
+em vez de Custom Vision nesta fase).
 
 Rodar com: python create_agent.py
 """
@@ -11,6 +12,7 @@ Rodar com: python create_agent.py
 from azure.ai.projects.models import PromptAgentDefinition
 
 from src.claim_intelligence.config import get_model_deployment_name, get_project_client
+from src.claim_intelligence.tools.vision import ANALYZE_DAMAGE_IMAGE_TOOL
 
 AGENT_NAME = "claim-processor"
 
@@ -45,8 +47,9 @@ def main() -> None:
         definition=PromptAgentDefinition(
             model=get_model_deployment_name(),
             instructions=INSTRUCTIONS,
+            tools=[ANALYZE_DAMAGE_IMAGE_TOOL],
         ),
-        description="Agente de análise de sinistros automotivos (fase 1: sem tools)",
+        description="Agente de análise de sinistros automotivos (fase 2: tool de Vision)",
     )
 
     print(f"Agent '{AGENT_NAME}' criado — versão: {agent_version.version}")

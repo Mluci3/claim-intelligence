@@ -72,3 +72,4 @@ websockets==15.0.1
 azure-ai-projects==2.2.0
 azure-identity==1.25.3
 python-dotenv
+azure-ai-vision-imageanalysis

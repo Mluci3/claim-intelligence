@@ -57,7 +57,7 @@ rg-claim-intelligence
 ├── Foundry Hub: hub-claim-intelligence (East US 2)
 │   └── Foundry Project: claim-analyzer (East US 2)
 │       ├── Model deployment: gpt-5.4-nano (Global Standard) ✅
-│       ├── Agent: claim-processor ✅ (v1, sem tools ainda)
+│       ├── Agent: claim-processor ✅ (v2 — tool analyze_damage_image ativa)
 │       └── Connections: Vision ✅, Doc Intel ✅, Search ✅, Storage ✅
 ├── Azure AI Vision: vision-claim-intelligence (East US 2)
 ├── Document Intelligence: docintel-claim-intelligence (East US 2)
@@ -131,17 +131,20 @@ python-dotenv         → configuração via .env
 - Agent `claim-processor` (v1) criado 100% via SDK (`create_agent.py`, `PromptAgentDefinition`), sem tools ainda — testado com sucesso via `test_agent.py` (Responses API + `agent_reference`)
 - Estrutura `src/claim_intelligence/` criada (`config.py` com factory do client, reutilizável pelos próximos scripts)
 - Venv movido para `~/.venvs/claim-intelligence` (fora da pasta Documents sincronizada pelo iCloud) — resolve de vez o bug recorrente de arquivos "dataless"
+- Tool `analyze_damage_image` implementada como Function Tool (`src/claim_intelligence/tools/vision.py`) — busca credencial via connection do Foundry (não duplica key no `.env`), classificação de severidade por heurística sobre tags do Image Analysis (ver ADR-0007)
+- Agent `claim-processor` v2 criado com a tool anexada; loop completo de tool calling testado e validado ponta a ponta (`test_agent_with_tool.py`) — agent corretamente recomendou "análise manual" quando a heurística voltou `indeterminado`
 
 ### 🔄 Em andamento
 
-- Nenhuma tarefa de infraestrutura em andamento — agent base criado e validado, próximo passo é adicionar tools
+- Nenhuma tarefa de infraestrutura em andamento — primeira tool completa e validada, próximo passo é a segunda tool
 
 ### ⏭️ Próximos passos (ordem)
 
-1. Implementar a primeira tool (Vision — `analyze_damage_image`), já que a connection está pronta e o dataset Car Damage Severity já está pronto
-2. Implementar `extract_cnh_data` (Document Intelligence) e testar com a amostra de carteiras EU
+1. Implementar `extract_cnh_data` (Document Intelligence) e testar com a amostra de carteiras EU
+2. Implementar `extract_bo_data` e `search_policies` (RAG via AI Search)
 3. Gerar datasets sintéticos restantes (BOs, apólices) e indexar apólices no AI Search
-4. (Futuro) Aplicar o mesmo padrão de hardening do Storage (Entra ID only, RBAC granular) em Vision/Doc Intel/Search
+4. (Futuro) Treinar Custom Vision pra substituir a heurística de severidade (ADR-0007)
+5. (Futuro) Aplicar o mesmo padrão de hardening do Storage (Entra ID only, RBAC granular) em Vision/Doc Intel/Search
 
 ---
 

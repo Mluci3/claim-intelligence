@@ -39,6 +39,12 @@ e este projeto adota [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Smoke test `test_agent.py` valida a invocação via Responses API (`agent_reference`)
 - Venv movido para fora da pasta Documents sincronizada (`~/.venvs/claim-intelligence`) — resolve recorrência de arquivos "dataless" do iCloud
 
+### Primeira tool do agent implementada
+- `analyze_damage_image` implementada como Function Tool (`src/claim_intelligence/tools/vision.py`), usando a connection do Foundry para credenciais (não duplica key no `.env`)
+- Classificação de severidade por heurística sobre tags do Azure AI Vision — ADR-0007 documenta a decisão de adiar Custom Vision
+- Agent `claim-processor` v2 criado com a tool anexada; loop completo de tool calling (function_call → execução → function_call_output → resposta final) testado e validado ponta a ponta
+- Corrigido: feature `Caption` do Image Analysis não é suportada em East US 2 — heurística usa só `Tags`, que tem disponibilidade regional ampla
+
 ### Dataset de documentos de identidade trocado
 - IDNet (`chitreshkr/idnet-identity-document-analysis`) descartado — pacote monolítico de 49GB sem suporte a download parcial, volume desnecessário para o caso de uso
 - Substituído por amostra de 30 imagens de `felipebandeiraramos/synthetic-eu-drivers-licences` — categorias de habilitação (A/B/C) mais próximas estruturalmente da CNH brasileira que o padrão americano
