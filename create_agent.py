@@ -1,0 +1,56 @@
+"""
+Cria (ou atualiza) o agent claim-processor no Foundry Project via SDK.
+
+Fase 1 (ADR-0002): single-agent, sem tools ainda. As tools (Vision,
+Document Intelligence, AI Search) serão adicionadas em versões
+subsequentes do agent, uma a uma.
+
+Rodar com: python create_agent.py
+"""
+
+from azure.ai.projects.models import PromptAgentDefinition
+
+from src.claim_intelligence.config import get_model_deployment_name, get_project_client
+
+AGENT_NAME = "claim-processor"
+
+INSTRUCTIONS = """\
+Você é o claim-processor, um agente especializado em análise de sinistros \
+automotivos para uma seguradora brasileira.
+
+Seu papel é analisar sinistros combinando evidências de múltiplas fontes \
+(fotos do veículo danificado, CNH do condutor, Boletim de Ocorrência, \
+apólice de seguro) para gerar um parecer fundamentado.
+
+Para cada sinistro, você deve:
+1. Avaliar a severidade do dano com base nas imagens fornecidas
+2. Validar os documentos do condutor (CNH) e verificar se estão dentro da validade
+3. Verificar consistência entre o relato do Boletim de Ocorrência e os danos observados
+4. Consultar a apólice do segurado para checar cobertura, exclusões e franquia aplicável
+5. Emitir uma recomendação: "aprovar", "análise manual" ou "negar", sempre com \
+justificativa clara
+
+Baseie suas conclusões sempre nos dados fornecidos pelas ferramentas disponíveis \
+— nunca invente informações sobre o sinistro. Se faltar uma evidência necessária \
+para uma decisão segura, recomende "análise manual" em vez de arriscar uma \
+decisão errada.
+"""
+
+
+def main() -> None:
+    client = get_project_client()
+
+    agent_version = client.agents.create_version(
+        AGENT_NAME,
+        definition=PromptAgentDefinition(
+            model=get_model_deployment_name(),
+            instructions=INSTRUCTIONS,
+        ),
+        description="Agente de análise de sinistros automotivos (fase 1: sem tools)",
+    )
+
+    print(f"Agent '{AGENT_NAME}' criado — versão: {agent_version.version}")
+
+
+if __name__ == "__main__":
+    main()

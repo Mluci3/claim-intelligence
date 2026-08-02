@@ -32,6 +32,13 @@ e este projeto adota [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - **Azure AI Search em East US, não East US 2:** tentativa de criação no Free tier em East US 2 falhou com `InsufficientResourcesAvailable` (falta de capacidade da região no momento). Decisão: manter Free em outra região em vez de pagar S1 (~US$ 250/mês fixo) só por consistência de região — sem justificativa de custo para o volume de uso do projeto. Detalhes em `docs/AI-103-STUDY-GUIDE.md`.
 - **Storage provisionado direto com hardening de segurança** (Entra ID only + rede restrita), diferente dos outros 3 recursos (ainda em "Chave da API" com rede aberta) — início de uma passada progressiva de least-privilege pelo projeto, alinhada a tópicos de segurança da AI-103.
 
+### Primeiro agent criado
+- Model deployment `gpt-5.4-nano` (Global Standard) criado no Foundry Project
+- Agent `claim-processor` (v1) criado via SDK (`azure-ai-projects` 2.x, `PromptAgentDefinition`), ainda sem tools — fase 1 do ADR-0002 (single-agent)
+- Estrutura `src/claim_intelligence/` iniciada com `config.py` (factory reutilizável de `AIProjectClient`)
+- Smoke test `test_agent.py` valida a invocação via Responses API (`agent_reference`)
+- Venv movido para fora da pasta Documents sincronizada (`~/.venvs/claim-intelligence`) — resolve recorrência de arquivos "dataless" do iCloud
+
 ### Dataset de documentos de identidade trocado
 - IDNet (`chitreshkr/idnet-identity-document-analysis`) descartado — pacote monolítico de 49GB sem suporte a download parcial, volume desnecessário para o caso de uso
 - Substituído por amostra de 30 imagens de `felipebandeiraramos/synthetic-eu-drivers-licences` — categorias de habilitação (A/B/C) mais próximas estruturalmente da CNH brasileira que o padrão americano

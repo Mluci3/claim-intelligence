@@ -56,7 +56,8 @@ Construir uma plataforma multi-agent enterprise-grade que automatiza análise de
 rg-claim-intelligence
 ├── Foundry Hub: hub-claim-intelligence (East US 2)
 │   └── Foundry Project: claim-analyzer (East US 2)
-│       ├── Agent: claim-processor ⏳ (a criar)
+│       ├── Model deployment: gpt-5.4-nano (Global Standard) ✅
+│       ├── Agent: claim-processor ✅ (v1, sem tools ainda)
 │       └── Connections: Vision ✅, Doc Intel ✅, Search ✅, Storage ✅
 ├── Azure AI Vision: vision-claim-intelligence (East US 2)
 ├── Document Intelligence: docintel-claim-intelligence (East US 2)
@@ -126,16 +127,20 @@ python-dotenv         → configuração via .env
 - Recurso **Azure AI Search** `search-claim-intelligence` provisionado (Free tier, região **East US** — ver nota de região acima) e conectado ao Foundry Project
 - Recurso **Azure Blob Storage** `stclaimintelligence` (East US 2, Standard LRS) provisionado com hardening: Entra ID only (sem key), rede restrita ao IP da Maria + trusted Azure services
 - Criado `docs/AI-103-STUDY-GUIDE.md` — manual de estudos hands-on, atualizado a cada sessão
+- Deployment de modelo `gpt-5.4-nano` (Global Standard, pay-as-you-go) criado no Foundry Project
+- Agent `claim-processor` (v1) criado 100% via SDK (`create_agent.py`, `PromptAgentDefinition`), sem tools ainda — testado com sucesso via `test_agent.py` (Responses API + `agent_reference`)
+- Estrutura `src/claim_intelligence/` criada (`config.py` com factory do client, reutilizável pelos próximos scripts)
+- Venv movido para `~/.venvs/claim-intelligence` (fora da pasta Documents sincronizada pelo iCloud) — resolve de vez o bug recorrente de arquivos "dataless"
 
 ### 🔄 Em andamento
 
-- Nenhuma tarefa de infraestrutura em andamento — provisionamento e conexão dos 4 recursos concluídos
+- Nenhuma tarefa de infraestrutura em andamento — agent base criado e validado, próximo passo é adicionar tools
 
 ### ⏭️ Próximos passos (ordem)
 
-1. Criar o agente `claim-processor` 100% via código Python (SDK)
-2. Implementar a primeira tool (single-agent) — provavelmente Vision, já que a connection está pronta e o dataset Car Damage Severity já está pronto
-3. Testar a tool `extract_cnh_data` com a amostra de carteiras EU (Document Intelligence)
+1. Implementar a primeira tool (Vision — `analyze_damage_image`), já que a connection está pronta e o dataset Car Damage Severity já está pronto
+2. Implementar `extract_cnh_data` (Document Intelligence) e testar com a amostra de carteiras EU
+3. Gerar datasets sintéticos restantes (BOs, apólices) e indexar apólices no AI Search
 4. (Futuro) Aplicar o mesmo padrão de hardening do Storage (Entra ID only, RBAC granular) em Vision/Doc Intel/Search
 
 ---

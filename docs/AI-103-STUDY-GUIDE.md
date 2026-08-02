@@ -145,7 +145,8 @@ Registro de erros reais batidos durante o desenvolvimento — cada um é matéri
 
 | Sintoma | Causa raiz | Lição |
 |---|---|---|
-| `ModuleNotFoundError: No module named 'azure'` | Script rodando com o Python do sistema/pyenv, não o `.venv` do projeto | Sempre confirmar `which python` aponta pro `.venv/bin/python` antes de rodar |
+| `ModuleNotFoundError: No module named 'azure'` | Script rodando com o Python do sistema/pyenv, não o venv do projeto | Sempre confirmar `which python` aponta pro venv correto antes de rodar |
+| Import trava indefinidamente (`KeyboardInterrupt` aponta pra `get_data` do importlib, lendo um `.py` de dentro do venv) | Mesmo problema de arquivos "dataless" do iCloud, agora atingindo o `.venv` inteiro (milhares de arquivos), não só docs — porque o venv mora dentro da pasta Documents sincronizada | **Correção definitiva** (não só paliativa): recriar o venv **fora** de qualquer pasta sincronizada por nuvem (ex: `~/.venvs/<projeto>` em vez de `<repo>/.venv`). Venv é sempre regenerável — nunca deveria estar em pasta sincronizada/versionada |
 | `zsh: command not found: az` | Azure CLI não instalado | `brew install azure-cli`; é pré-requisito separado do SDK Python |
 | Criar recurso e nome "já existe" mesmo após deletar | Soft-delete prendendo o nome | `az cognitiveservices account purge` |
 | **Erro 400 ao criar connection no Foundry** | Categoria de connection errada — estava tentando conectar um recurso Cognitive Services pela categoria "Fábrica de IA do Azure" (que espera outro Hub), não pela categoria "Chave da API" | Recurso sem card dedicado na aba "Procurar" → sempre cai em "Chave da API" (conexão manual) |
