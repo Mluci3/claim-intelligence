@@ -193,8 +193,8 @@ az group create --name rg-claim-intelligence --location eastus2
 | Fase | Status |
 |------|--------|
 | 📋 Planejamento | ✅ Concluído |
-| 🏗️ Setup Azure Foundry | 🔄 Em andamento — infra provisionada (Hub, Project, Vision, Doc Intel, Search, Storage); hardening de segurança (Managed Identity em todos os recursos) e conexão do Storage ao Project ainda pendentes |
-| 🤖 Agent Implementation | ⏳ Em breve |
+| 🏗️ Setup Azure Foundry | ✅ Concluído — infra provisionada (Hub, Project, Vision, Doc Intel, Search, Storage) e conectada ao Project; Storage com Entra ID only e RBAC por container. Hardening dos demais recursos pendente |
+| 🤖 Agent Implementation | 🔄 Em andamento — agent `claim-processor` criado via SDK; 1ª tool (`analyze_damage_image`, Vision) validada ponta a ponta. Próximas: `extract_cnh_data`, `extract_bo_data`, `search_policies` |
 | 🧪 Evaluations | ⏳ Em breve |
 | 📊 Observability | ⏳ Em breve |
 | 🚀 Deploy | ⏳ Em breve |
